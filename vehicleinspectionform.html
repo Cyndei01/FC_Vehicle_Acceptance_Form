@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Van Inspection &amp; Acceptance — F&amp;C Packaging Inc.</title>
+  <title>Van Inspection &amp; Acceptance - F&amp;C Packaging Inc.</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,7 +23,6 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
 
-    /* HEADER */
     .header {
       border-bottom: 3px solid #1a3a6b;
       padding-bottom: 12px;
@@ -38,7 +37,6 @@
     .header h2 { font-size: 13px; color: #333; font-weight: 400; margin-top: 3px; }
     .header-right { text-align: right; font-size: 12px; color: #333; }
 
-    /* TOP INFO ROW */
     .info-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -72,7 +70,6 @@
     }
     .info-field input:focus { border-bottom-color: #1a3a6b; }
 
-    /* SECTION TITLE */
     .section-title {
       background: #1a3a6b;
       color: #fff;
@@ -84,7 +81,6 @@
       margin: 18px 0 0;
     }
 
-    /* ── DESKTOP TABLE ── */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -145,7 +141,6 @@
     }
     .dmg-input:focus { border-bottom-color: #1a3a6b; }
 
-    /* CLEANLINESS NOTE */
     .clean-note {
       font-size: 12px;
       color: #222;
@@ -154,7 +149,70 @@
       border-left: 4px solid #c07800;
     }
 
-    /* SIGN-OFF */
+    .equipment-box, .photo-box {
+      border: 1px solid #b0bccc;
+      border-top: none;
+      padding: 14px 16px;
+      background: #fff;
+    }
+    .equipment-intro, .photo-intro {
+      color: #222;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .radio-row, .check-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      margin-bottom: 12px;
+    }
+    .radio-row label, .check-grid label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 700;
+      color: #111;
+      cursor: pointer;
+    }
+    .radio-row input, .check-grid input { accent-color: #1a3a6b; width: 17px; height: 17px; }
+    .textarea-field label, .photo-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      min-height: 86px;
+      resize: vertical;
+      border: 1.5px solid #b0bccc;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      padding: 9px;
+      outline: none;
+    }
+    textarea:focus { border-color: #1a3a6b; }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .photo-field {
+      background: #f8f9fc;
+      border: 1px solid #d1d7e2;
+      border-radius: 4px;
+      padding: 11px;
+    }
+    .photo-field input[type="file"] {
+      width: 100%;
+      font-size: 13px;
+    }
+
     .signoff-box {
       margin-top: 20px;
       border: 2px solid #1a3a6b;
@@ -168,11 +226,9 @@
     .signoff-text { font-size: 13px; color: #222; line-height: 1.7; margin-bottom: 16px; }
     .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .sig-block > label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #111; letter-spacing: 0.4px; }
-    .sig-line { border-bottom: 2px solid #333; height: 36px; margin: 6px 0 5px; }
     .sig-meta { display: flex; gap: 12px; }
     .sig-meta .info-field { flex: 1; }
 
-    /* KEYS HANDOVER */
     .keys-row {
       margin-top: 16px;
       padding: 12px 14px;
@@ -200,13 +256,11 @@
       width: 130px;
     }
 
-    /* FOOTER */
     .footer {
       text-align: center; font-size: 11px; color: #555;
       margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;
     }
 
-    /* BUTTONS */
     .btn-row {
       display: flex;
       justify-content: center;
@@ -231,7 +285,6 @@
     .save-btn { background: #155f2d; color: #fff; display: none; }
     .save-btn:hover { background: #0d3d1c; }
 
-    /* SUCCESS BANNER */
     .success-banner {
       display: none;
       background: #e8f5e9;
@@ -245,78 +298,37 @@
     }
     .success-banner p { font-weight: 400; color: #222; margin-top: 4px; font-size: 13px; }
 
-    /* ── MOBILE RESPONSIVE ── */
     @media (max-width: 700px) {
-
       body { padding: 8px; font-size: 15px; }
-
       .page { padding: 16px 14px; }
-
       .header h1 { font-size: 18px; }
       .header h2 { font-size: 14px; }
       .header-right { text-align: left; font-size: 13px; }
       .header { flex-direction: column; align-items: flex-start; }
-
       .info-row { grid-template-columns: 1fr 1fr; gap: 16px 12px; }
       .info-field label { font-size: 12px; color: #111; }
-      .info-field input[type="text"],
-      .info-field input[type="date"] { font-size: 16px; }
-
+      .info-field input[type="text"], .info-field input[type="date"] { font-size: 16px; }
       .section-title { font-size: 13px; padding: 9px 12px; }
-
-      /* Hide desktop table header on mobile */
       table thead { display: none; }
-
-      /* Stack each row as a card */
       table, tbody, tr, td { display: block; width: 100%; }
-
       tr.section-row { margin-top: 12px; }
-      tr.section-row td {
-        border-radius: 4px;
-        font-size: 13px;
-        padding: 8px 12px;
-        color: #fff;
-        background: #1a3a6b;
-      }
-
-      tbody tr {
-        border: 1.5px solid #bbb;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        padding: 12px;
-        background: #fff;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      }
+      tr.section-row td { border-radius: 4px; font-size: 13px; padding: 8px 12px; color: #fff; background: #1a3a6b; }
+      tbody tr { border: 1.5px solid #bbb; border-radius: 8px; margin-bottom: 10px; padding: 12px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
       tbody tr:nth-child(even) { background: #fff; }
-
       td { border: none; padding: 4px 0; }
       td.cat { font-size: 11px; color: #444; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.3px; }
       td.item { font-size: 16px; color: #111; font-weight: 700; margin-bottom: 4px; }
       td.std { font-size: 13px; color: #333; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 8px; line-height: 1.5; }
-
       td.pf { text-align: left; margin-bottom: 8px; }
       .pf-wrap { justify-content: flex-start; gap: 24px; }
       .pf-wrap label { font-size: 16px; gap: 8px; }
       .pf-wrap input[type="radio"] { width: 20px; height: 20px; }
-
-      td.dmg::before {
-        content: "Notes:";
-        display: block;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #444;
-        margin-bottom: 4px;
-        letter-spacing: 0.3px;
-      }
-      .dmg-input {
-        font-size: 15px;
-        padding: 5px 2px;
-        border-bottom: 2px solid #999;
-      }
-
+      td.dmg::before { content: "Notes:"; display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #444; margin-bottom: 4px; letter-spacing: 0.3px; }
+      .dmg-input { font-size: 15px; padding: 5px 2px; border-bottom: 2px solid #999; }
       .clean-note { font-size: 13px; padding: 10px 12px; }
-
+      .equipment-box, .photo-box { padding: 12px; }
+      .radio-row, .check-grid { flex-direction: column; gap: 10px; }
+      .photo-grid { grid-template-columns: 1fr; }
       .signoff-box { padding: 14px; }
       .signoff-title { font-size: 14px; }
       .signoff-text { font-size: 13px; }
@@ -325,15 +337,11 @@
       .sig-meta { flex-direction: column; gap: 10px; }
       .sig-meta .info-field label { font-size: 12px; color: #111; }
       .sig-meta .info-field input { font-size: 16px !important; border-bottom: 2px solid #888 !important; }
-
       .keys-row { flex-direction: column; align-items: flex-start; gap: 10px; font-size: 15px; }
-      .keys-row input[type="date"],
-      .keys-row input[type="text"] { width: 100%; font-size: 16px; }
+      .keys-row input[type="date"], .keys-row input[type="text"] { width: 100%; font-size: 16px; }
       .keys-row label { font-size: 15px; }
-
       .btn-row { flex-direction: column; align-items: stretch; }
       .print-btn, .submit-btn, .save-btn { width: 100%; text-align: center; padding: 16px; font-size: 17px; }
-
       .footer { font-size: 12px; color: #444; }
     }
 
@@ -341,7 +349,6 @@
       .info-row { grid-template-columns: 1fr; }
     }
 
-    /* PRINT STYLES */
     @media print {
       body { background: none; padding: 0; font-size: 11px; }
       .page { box-shadow: none; padding: 0; max-width: none; }
@@ -354,31 +361,29 @@
       tbody td { padding: 5px 7px; border: 1px solid #ccc; color: #111; }
       tr.section-row td { background: #1a3a6b !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       td.cat::before, td.item::before, td.std::before, td.pf::before, td.dmg::before { display: none !important; content: none !important; }
+      .equipment-box, .photo-box { border: 1px solid #b0bccc; }
     }
   </style>
 </head>
 <body>
 
-<form class="page" id="inspection-form" action="https://formspree.io/f/meewzaej" method="POST">
+<form class="page" id="inspection-form" action="https://formspree.io/f/meewzaej" method="POST" enctype="multipart/form-data">
 
-  <input type="hidden" name="_subject" value="Van Inspection & Acceptance — F&C Packaging Inc." />
+  <input type="hidden" name="_subject" value="Van Inspection & Acceptance - F&C Packaging Inc." />
 
-  <!-- SUCCESS BANNER (shown after submit, inside form so it prints) -->
   <div class="success-banner" id="success-banner">
-    &#10003; Form submitted successfully to F&amp;C Packaging Inc.
-    <p>⬇️ <strong>Please tap "Save / Download a Copy" below to save your completed form as a PDF.</strong> Keep it for your personal records.</p>
+    Form submitted successfully to F&amp;C Packaging Inc.
+    <p><strong>Please tap "Save / Download a Copy" below to save your completed form as a PDF.</strong> Keep it for your personal records.</p>
   </div>
 
-  <!-- HEADER -->
   <div class="header">
     <div>
       <h1>F&amp;C Packaging Inc.</h1>
-      <h2>Cargo Van — Driver Inspection &amp; Acceptance Form</h2>
+      <h2>Cargo Van - Driver Inspection &amp; Acceptance Form</h2>
     </div>
     <div class="header-right">This form protects both the driver and the company.<br />Retain a copy for fleet records.</div>
   </div>
 
-  <!-- TOP INFO -->
   <div class="info-row">
     <div class="info-field">
       <label>Van License Plate</label>
@@ -410,7 +415,6 @@
     </div>
   </div>
 
-  <!-- PRE-HANDOVER INSPECTION -->
   <div class="section-title">Pre-Handover Vehicle Inspection</div>
 
   <table>
@@ -424,61 +428,57 @@
       </tr>
     </thead>
     <tbody>
-
       <tr class="section-row"><td colspan="5">Exterior</td></tr>
-
       <tr>
         <td class="cat">Exterior Body</td>
         <td class="item">Body Panels</td>
         <td class="std">No unauthorized dents, dings, or deep scratches.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Body and Panels" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Body and Panels" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Body and Panels Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Body and Panels Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Glass &amp; Mirrors</td>
         <td class="item">Windshield &amp; Mirrors</td>
         <td class="std">Clear of chips, cracks, and obstructions.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Glass and Mirrors" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Glass and Mirrors" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Glass and Mirrors Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Glass and Mirrors Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Tires &amp; Wheels</td>
         <td class="item">Tires (all 4)</td>
         <td class="std">Safe tread depth, no bald areas or visible damage.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Tires" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Tires" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Tires Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Tires Notes" placeholder="Note any existing damage..." /></td>
       </tr>
-
       <tr>
         <td class="cat">Lighting System</td>
         <td class="item">All Lights</td>
         <td class="std">Headlights, taillights, and indicators fully operational.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Lights" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Lights" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Lights Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Lights Notes" placeholder="Note any existing damage..." /></td>
       </tr>
 
       <tr class="section-row"><td colspan="5">Cargo Area (Van-Specific)</td></tr>
-
       <tr>
         <td class="cat">Cargo Doors</td>
         <td class="item">Sliding &amp; Rear Doors</td>
         <td class="std">Open, close, and latch securely. No damage to tracks or seals.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Cargo Doors" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Cargo Doors" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Cargo Doors Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Cargo Doors Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Cargo Floor</td>
         <td class="item">Floor &amp; Lining</td>
         <td class="std">Free of holes, sharp edges, or structural damage.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Cargo Floor" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Cargo Floor" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Cargo Floor Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Cargo Floor Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Bulkhead</td>
         <td class="item">Partition / Divider</td>
         <td class="std">Secure, intact, and free of sharp edges or damage.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Bulkhead" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Bulkhead" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Bulkhead Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Bulkhead Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Tie-Downs</td>
@@ -489,13 +489,12 @@
       </tr>
 
       <tr class="section-row"><td colspan="5">Interior Cabin</td></tr>
-
       <tr>
         <td class="cat">Interior Cabin</td>
         <td class="item">Seats &amp; Upholstery</td>
         <td class="std">Free of tears, rips, and major stains.</td>
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Seats" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Seats" value="Fail" />Fail</label></div></td>
-        <td class="dmg"><input class="dmg-input" type="text" name="Seats Notes" placeholder="Note any existing damage…" /></td>
+        <td class="dmg"><input class="dmg-input" type="text" name="Seats Notes" placeholder="Note any existing damage..." /></td>
       </tr>
       <tr>
         <td class="cat">Interior Cabin</td>
@@ -511,11 +510,59 @@
         <td class="pf"><div class="pf-wrap"><label class="pass-label"><input type="radio" name="Fire Extinguisher" value="Pass" />Pass</label><label class="fail-label"><input type="radio" name="Fire Extinguisher" value="Fail" />Fail</label></div></td>
         <td class="dmg"><input class="dmg-input" type="text" name="Fire Extinguisher Notes" /></td>
       </tr>
-
     </tbody>
   </table>
 
-  <!-- MANDATORY CLEANLINESS -->
+  <div class="section-title">Equipment Verification</div>
+  <div class="equipment-box">
+    <p class="equipment-intro">Verify whether any additional equipment is present in the van before accepting the vehicle.</p>
+    <div class="radio-row">
+      <label><input type="radio" name="Additional Equipment Present" value="Yes" required /> Additional equipment is present</label>
+      <label><input type="radio" name="Additional Equipment Present" value="No" required /> No additional equipment is present</label>
+    </div>
+    <div class="check-grid" id="equipment-options">
+      <label><input type="checkbox" name="Equipment Present" value="Generator" /> Generator</label>
+      <label><input type="checkbox" name="Equipment Present" value="Air Conditioning Unit" /> Air conditioning unit</label>
+      <label><input type="checkbox" name="Equipment Present" value="Heater" /> Heater</label>
+      <label><input type="checkbox" name="Equipment Present" value="Other" /> Other equipment</label>
+    </div>
+    <div class="textarea-field">
+      <label>Equipment Notes / Condition</label>
+      <textarea name="Equipment Notes" placeholder="List equipment found and describe condition, damage, missing parts, operating issues, or write N/A if none."></textarea>
+    </div>
+  </div>
+
+  <div class="section-title">Required Vehicle Photos</div>
+  <div class="photo-box">
+    <p class="photo-intro">Upload all 6 required images before submitting. Photos should clearly show the vehicle condition at handover.</p>
+    <div class="photo-grid">
+      <div class="photo-field">
+        <label>Exterior Driver Side</label>
+        <input type="file" name="Exterior Driver Side Photo" accept="image/*" required />
+      </div>
+      <div class="photo-field">
+        <label>Exterior Front</label>
+        <input type="file" name="Exterior Front Photo" accept="image/*" required />
+      </div>
+      <div class="photo-field">
+        <label>Exterior Passenger Side</label>
+        <input type="file" name="Exterior Passenger Side Photo" accept="image/*" required />
+      </div>
+      <div class="photo-field">
+        <label>Exterior Rear</label>
+        <input type="file" name="Exterior Rear Photo" accept="image/*" required />
+      </div>
+      <div class="photo-field">
+        <label>Interior Front</label>
+        <input type="file" name="Interior Front Photo" accept="image/*" required />
+      </div>
+      <div class="photo-field">
+        <label>Interior Rear</label>
+        <input type="file" name="Interior Rear Photo" accept="image/*" required />
+      </div>
+    </div>
+  </div>
+
   <div class="section-title" style="margin-top:18px;">Mandatory Cleanliness Standards</div>
   <div class="clean-note">
     The following cleanliness standards must be met <strong>before</strong> a driver accepts the vehicle. If any item is not met, the driver should note it below and notify their Fleet Manager before departing via text: <strong>Charles (734) 540-6006</strong> or <strong>Shanna (734) 540-6007</strong>.
@@ -563,7 +610,6 @@
     </tbody>
   </table>
 
-  <!-- DRIVER SIGN-OFF -->
   <div class="signoff-box" style="margin-top:20px;">
     <div class="signoff-title">Driver Sign-Off Statement</div>
     <div class="signoff-text">
@@ -573,7 +619,7 @@
       <div class="sig-block">
         <label>Driver Electronic Signature</label>
         <div class="info-field" style="margin-top:8px;">
-          <label style="font-size:9px;color:#aaa;font-weight:400;text-transform:none;letter-spacing:0;">Type your full name in the format &nbsp;<strong style="color:#1a3a6b;">/Full Name/</strong>&nbsp; to sign</label>
+          <label style="font-size:9px;color:#777;font-weight:400;text-transform:none;letter-spacing:0;">Type your full name in the format <strong style="color:#1a3a6b;">/Full Name/</strong> to sign</label>
           <input type="text" name="Driver Signature" placeholder="/First Last/" required style="width:100%;border:none;border-bottom:2px solid #1a3a6b;font-size:16px;font-style:italic;outline:none;padding:6px 4px;color:#1a3a6b;font-family:Georgia,serif;" />
         </div>
         <div class="sig-meta" style="margin-top:10px;">
@@ -603,7 +649,6 @@
     </div>
   </div>
 
-  <!-- KEYS HANDOVER -->
   <div class="keys-row">
     <strong>Keys Handed Over by F&amp;C Packaging Inc. on:</strong>
     <input type="date" name="Keys Handover Date" required />
@@ -615,15 +660,14 @@
   </div>
 
   <div class="footer">
-    F&amp;C Packaging Inc. — Cargo Van Inspection &amp; Acceptance — Keep a signed copy on file for each driver handover.
+    F&amp;C Packaging Inc. - Cargo Van Inspection &amp; Acceptance - Keep a signed copy on file for each driver handover.
   </div>
-
 </form>
 
 <div class="btn-row" id="btn-row">
-  <button type="button" class="print-btn" id="print-btn" onclick="window.print()">&#128438;&nbsp; Print / Save as PDF</button>
-  <button type="submit" class="submit-btn" form="inspection-form" id="submit-btn">&#10003;&nbsp; Submit Form</button>
-  <button type="button" class="save-btn" id="save-btn" onclick="window.print()">&#11015;&nbsp; Save / Download a Copy</button>
+  <button type="button" class="print-btn" id="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  <button type="submit" class="submit-btn" form="inspection-form" id="submit-btn">Submit Form</button>
+  <button type="button" class="save-btn" id="save-btn" onclick="window.print()">Save / Download a Copy</button>
 </div>
 
 <script>
@@ -640,7 +684,16 @@
     'Cargo Doors', 'Cargo Floor', 'Bulkhead', 'Tie-Downs',
     'Seats', 'Seat Belts', 'Fire Extinguisher',
     'Cabin Floor', 'Surfaces and Dash', 'Air Quality', 'Cargo Cleanliness',
-    'Key Fob'
+    'Additional Equipment Present', 'Key Fob'
+  ];
+
+  const requiredPhotoFields = [
+    'Exterior Driver Side Photo',
+    'Exterior Front Photo',
+    'Exterior Passenger Side Photo',
+    'Exterior Rear Photo',
+    'Interior Front Photo',
+    'Interior Rear Photo'
   ];
 
   form.addEventListener('submit', async function(e) {
@@ -650,42 +703,62 @@
       !form.querySelector(`input[name="${name}"]:checked`)
     );
 
+    const missingPhotos = requiredPhotoFields.filter(name => {
+      const field = form.querySelector(`input[name="${name}"]`);
+      return !field || field.files.length === 0;
+    });
+
+    const equipmentAnswer = form.querySelector('input[name="Additional Equipment Present"]:checked');
+    const selectedEquipment = [...form.querySelectorAll('input[name="Equipment Present"]:checked')];
+    const equipmentNotes = form.querySelector('textarea[name="Equipment Notes"]');
+
+    if (equipmentAnswer && equipmentAnswer.value === 'Yes' && selectedEquipment.length === 0 && equipmentNotes.value.trim() === '') {
+      missing.push('Equipment details or equipment notes');
+    }
+
+    if (missingPhotos.length > 0) {
+      missing.push(...missingPhotos);
+    }
+
     if (missing.length > 0) {
-      alert('Please complete the following before submitting:\n\n' + missing.map(n => '• ' + n).join('\n'));
+      alert('Please complete the following before submitting:\n\n' + missing.map(n => '- ' + n).join('\n'));
       return;
     }
 
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting…';
+    submitBtn.textContent = 'Submitting...';
 
-    // Build FormData, stripping empty notes fields
     const rawData = new FormData(form);
     const cleanData = new FormData();
+    const sheetData = {};
+
     for (const [key, value] of rawData.entries()) {
-      if (key.endsWith('Notes') && value.trim() === '') continue;
-      cleanData.append(key, value);
+      if (typeof value === 'string') {
+        if ((key.endsWith('Notes') || key === 'Equipment Notes') && value.trim() === '') continue;
+        cleanData.append(key, value);
+        sheetData[key] = sheetData[key] ? sheetData[key] + ', ' + value : value;
+      } else if (value && value.name) {
+        cleanData.append(key, value);
+        sheetData[key] = value.name;
+      }
     }
 
-    // Also build a plain object for Google Sheets
-    const sheetData = {};
-    for (const [key, value] of rawData.entries()) {
-      sheetData[key] = value;
-    }
+    const sheetsParams = Object.entries(sheetData)
+      .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+      .join('&');
 
     try {
-      // Submit to Formspree and Google Sheets simultaneously
-      const [fsResponse] = await Promise.all([
-        fetch(form.action, {
-          method: 'POST',
-          body: cleanData,
-          headers: { 'Accept': 'application/json' }
-        }),
-        // Fire data to Google Sheets via image ping (no CORS issues)
-        const sheetsParams = Object.entries(sheetData).map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&');
+      const fsResponse = await fetch(form.action, {
+        method: 'POST',
+        body: cleanData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (sheetsParams) {
         new Image().src = SHEETS_URL + '?' + sheetsParams;
-      ]);
+      }
 
       if (fsResponse.ok) {
         successBanner.style.display = 'block';
@@ -698,12 +771,12 @@
         });
       } else {
         submitBtn.disabled = false;
-        submitBtn.textContent = '✓ Submit Form';
+        submitBtn.textContent = 'Submit Form';
         alert('Submission failed. Please check your connection and try again.');
       }
     } catch (err) {
       submitBtn.disabled = false;
-      submitBtn.textContent = '✓ Submit Form';
+      submitBtn.textContent = 'Submit Form';
       alert('Submission failed. Please check your connection and try again.');
     }
   });
