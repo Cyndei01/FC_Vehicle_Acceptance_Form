@@ -1,6 +1,7 @@
 const DRIVE_FOLDER_ID = '1G5p90HMxgaJIaq4uolLjGNdW23clx-D2';
 const SPREADSHEET_ID = '';
 const SHEET_NAME = 'Vehicle Inspections';
+const ALERT_EMAILS = ['fandcpackaginginc@gmail.com'];
 
 function doGet(e) {
   if (e && e.parameter && e.parameter.health === '1') {
@@ -40,7 +41,8 @@ function doPost(e) {
     });
 
     appendInspectionRow(fields, photoLinks, inspectionFolder.getUrl());
-    return jsonResponse({ ok: true, folderUrl: inspectionFolder.getUrl(), photoLinks: photoLinks });
+    const emailResult = sendInspectionEmail(fields, photoLinks, inspectionFolder.getUrl());
+    return jsonResponse({ ok: true, folderUrl: inspectionFolder.getUrl(), photoLinks: photoLinks, email: emailResult });
   } catch (error) {
     return jsonResponse({ ok: false, error: String(error) });
   }
@@ -93,6 +95,47 @@ function appendInspectionRow(fields, photoLinks, folderUrl) {
   });
 
   sheet.appendRow(row);
+}
+
+function sendInspectionEmail(fields, photoLinks, folderUrl) {
+  if (!ALERT_EMAILS || ALERT_EMAILS.length === 0) {
+    return { sent: false, reason: 'No alert email recipients configured.' };
+  }
+
+  try {
+    const subject = 'Van Inspection Submitted - ' + (fields['Van License Plate'] || 'Unknown Van');
+    const lines = [
+      'A new van inspection form was submitted.',
+      '',
+      'Driver: ' + (fields['Driver Name'] || 'Not provided'),
+      'Van License Plate: ' + (fields['Van License Plate'] || 'Not provided'),
+      'Last 6 of VIN: ' + (fields['Last 6 of VIN'] || 'Not provided'),
+      'Inspection Date: ' + (fields['Date'] || 'Not provided'),
+      'Mileage: ' + (fields['Mileage'] || 'Not provided'),
+      'Pickup Location: ' + (fields['Pickup Location'] || 'Not provided'),
+      'Additional Equipment Present: ' + (fields['Additional Equipment Present'] || 'Not provided'),
+      'Equipment: ' + formatValue(fields['Equipment Present']),
+      '',
+      'Photo Folder:',
+      folderUrl || 'Not available',
+      '',
+      'Photo Links:'
+    ];
+
+    Object.keys(photoLinks || {}).forEach(function(label) {
+      lines.push(label + ': ' + photoLinks[label]);
+    });
+
+    MailApp.sendEmail({
+      to: ALERT_EMAILS.join(','),
+      subject: subject,
+      body: lines.join('\n')
+    });
+
+    return { sent: true, recipients: ALERT_EMAILS };
+  } catch (error) {
+    return { sent: false, error: String(error) };
+  }
 }
 
 function getSpreadsheet() {
@@ -168,6 +211,11 @@ function folderName(fields) {
 
 function safeFileName(value) {
   return String(value || 'file').replace(/[^A-Za-z0-9._ -]+/g, '-').trim().slice(0, 90) || 'file';
+}
+
+function formatValue(value) {
+  if (Array.isArray(value)) return value.join(', ');
+  return value || 'Not provided';
 }
 
 function extensionForMime(mimeType) {
