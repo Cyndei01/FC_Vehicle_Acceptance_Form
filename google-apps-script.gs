@@ -104,38 +104,84 @@ function sendInspectionEmail(fields, photoLinks, folderUrl) {
 
   try {
     const subject = 'Van Inspection Submitted - ' + (fields['Van License Plate'] || 'Unknown Van');
-    const lines = [
-      'A new van inspection form was submitted.',
-      '',
-      'Driver: ' + (fields['Driver Name'] || 'Not provided'),
-      'Van License Plate: ' + (fields['Van License Plate'] || 'Not provided'),
-      'Last 6 of VIN: ' + (fields['Last 6 of VIN'] || 'Not provided'),
-      'Inspection Date: ' + (fields['Date'] || 'Not provided'),
-      'Mileage: ' + (fields['Mileage'] || 'Not provided'),
-      'Pickup Location: ' + (fields['Pickup Location'] || 'Not provided'),
-      'Additional Equipment Present: ' + (fields['Additional Equipment Present'] || 'Not provided'),
-      'Equipment: ' + formatValue(fields['Equipment Present']),
-      '',
-      'Photo Folder:',
-      folderUrl || 'Not available',
-      '',
-      'Photo Links:'
-    ];
-
-    Object.keys(photoLinks || {}).forEach(function(label) {
-      lines.push(label + ': ' + photoLinks[label]);
-    });
+    const body = buildPlainTextSubmission(fields, photoLinks, folderUrl);
+    const htmlBody = buildHtmlSubmission(fields, photoLinks, folderUrl);
 
     MailApp.sendEmail({
       to: ALERT_EMAILS.join(','),
       subject: subject,
-      body: lines.join('\n')
+      body: body,
+      htmlBody: htmlBody
     });
 
     return { sent: true, recipients: ALERT_EMAILS };
   } catch (error) {
     return { sent: false, error: String(error) };
   }
+}
+
+function buildPlainTextSubmission(fields, photoLinks, folderUrl) {
+  const lines = [
+    'F&C Packaging Inc. - Cargo Van Inspection & Acceptance Form',
+    '',
+    'Photo Folder: ' + (folderUrl || 'Not available'),
+    ''
+  ];
+
+  getSubmissionSections().forEach(function(section) {
+    lines.push(section.title);
+    section.fields.forEach(function(name) {
+      lines.push(name + ': ' + formatValue(fields[name]));
+    });
+    lines.push('');
+  });
+
+  lines.push('Photo Links');
+  Object.keys(photoLinks || {}).forEach(function(label) {
+    lines.push(label + ': ' + photoLinks[label]);
+  });
+
+  return lines.join('\n');
+}
+
+function buildHtmlSubmission(fields, photoLinks, folderUrl) {
+  const sectionHtml = getSubmissionSections().map(function(section) {
+    const rows = section.fields.map(function(name) {
+      return '<tr><th>' + escapeHtml(name) + '</th><td>' + escapeHtml(formatValue(fields[name])) + '</td></tr>';
+    }).join('');
+    return '<h2>' + escapeHtml(section.title) + '</h2><table>' + rows + '</table>';
+  }).join('');
+
+  const photoRows = Object.keys(photoLinks || {}).map(function(label) {
+    const url = photoLinks[label];
+    return '<tr><th>' + escapeHtml(label) + '</th><td><a href="' + escapeAttr(url) + '">' + escapeHtml(url) + '</a></td></tr>';
+  }).join('');
+
+  return '<!doctype html><html><body>' +
+    '<div style="font-family:Arial,sans-serif;color:#111;max-width:860px;margin:0 auto;">' +
+    '<div style="background:#1a3a6b;color:#fff;padding:20px;border-bottom:5px solid #f4c430;">' +
+    '<div style="color:#f4c430;font-weight:bold;letter-spacing:.08em;">F&C PACKAGING</div>' +
+    '<h1 style="margin:8px 0 0;font-size:24px;">Cargo Van Inspection & Acceptance Form</h1>' +
+    '</div>' +
+    '<p><strong>Photo Folder:</strong> <a href="' + escapeAttr(folderUrl || '') + '">' + escapeHtml(folderUrl || 'Not available') + '</a></p>' +
+    sectionHtml +
+    '<h2>Uploaded Photos</h2><table>' + (photoRows || '<tr><td>No photo links provided.</td></tr>') + '</table>' +
+    '<p style="font-size:12px;color:#555;">This email is a submitted copy of the inspection form. Google Drive and Google Sheets remain the system of record.</p>' +
+    '</div>' +
+    '<style>h2{font-size:16px;margin:22px 0 8px;color:#1a3a6b;}table{border-collapse:collapse;width:100%;margin-bottom:10px;}th,td{border:1px solid #d5dbe5;padding:8px;text-align:left;vertical-align:top;}th{width:34%;background:#f4f6f8;color:#111;}a{color:#1a3a6b;}</style>' +
+    '</body></html>';
+}
+
+function getSubmissionSections() {
+  return [
+    { title: 'Vehicle / Driver Information', fields: ['Van License Plate','Last 6 of VIN','Driver Name','Orientation Date','Date','Mileage','Fuel Level'] },
+    { title: 'Exterior Inspection', fields: ['Body and Panels','Body and Panels Notes','Glass and Mirrors','Glass and Mirrors Notes','Tires','Tires Notes','Lights','Lights Notes'] },
+    { title: 'Cargo Area Inspection', fields: ['Cargo Doors','Cargo Doors Notes','Cargo Floor','Cargo Floor Notes','Bulkhead','Bulkhead Notes','Tie-Downs','Tie-Downs Notes'] },
+    { title: 'Interior / Safety Inspection', fields: ['Seats','Seats Notes','Seat Belts','Seat Belts Notes','Fire Extinguisher','Fire Extinguisher Notes'] },
+    { title: 'Equipment Verification', fields: ['Additional Equipment Present','Equipment Present','Equipment Notes'] },
+    { title: 'Cleanliness Standards', fields: ['Cabin Floor','Cabin Floor Notes','Surfaces and Dash','Surfaces and Dash Notes','Air Quality','Air Quality Notes','Cargo Cleanliness','Cargo Cleanliness Notes'] },
+    { title: 'Driver Sign-Off', fields: ['Driver Signature','Driver Printed Name','Signature Date','Van Picked Up From','Pickup Location','Keys Handover Date','Number of Keys','Key Fob'] }
+  ];
 }
 
 function getSpreadsheet() {
@@ -216,6 +262,19 @@ function safeFileName(value) {
 function formatValue(value) {
   if (Array.isArray(value)) return value.join(', ');
   return value || 'Not provided';
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value);
 }
 
 function extensionForMime(mimeType) {
