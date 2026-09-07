@@ -136,6 +136,12 @@ function healthCheck() {
   return result;
 }
 
+function authorizeSetup() {
+  const result = healthCheck();
+  Logger.log(JSON.stringify(result, null, 2));
+  return result;
+}
+
 function ensureHeaders(sheet, headers) {
   const firstRow = sheet.getRange(1, 1, 1, Math.max(headers.length, sheet.getLastColumn() || 1)).getValues()[0];
   const hasHeaders = firstRow.some(function(value) { return String(value || '').trim() !== ''; });
