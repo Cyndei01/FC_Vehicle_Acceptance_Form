@@ -209,15 +209,21 @@
   <div class="footer">F&amp;C Packaging Inc. - Cargo Van Inspection &amp; Acceptance - Keep a signed copy on file for each driver handover.</div>
 </form>
 <div class="btn-row" id="btn-row"><button type="button" class="print-btn" id="print-btn" onclick="window.print()">Print / Save as PDF</button><button type="submit" class="submit-btn" form="inspection-form" id="submit-btn">Submit Form</button><button type="button" class="save-btn" id="save-btn" onclick="window.print()">Save / Download a Copy</button></div>
+<div id="submit-status" style="max-width:900px;margin:12px auto 0;padding:12px 14px;border-radius:4px;display:none;font-family:Arial,sans-serif;font-size:14px;line-height:1.4;"></div>
 <script>
   const form = document.getElementById('inspection-form');
   const submitBtn = document.getElementById('submit-btn');
   const printBtn = document.getElementById('print-btn');
   const saveBtn = document.getElementById('save-btn');
   const successBanner = document.getElementById('success-banner');
+  const submitStatus = document.getElementById('submit-status');
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybpChS9_zmocIf7EKQA1w_PcDVdovv0eewupvyqjSziDCdIaNbcNkoNDs_9oIlxKu3GA/exec';
   const requiredRadioGroups = ['Body and Panels','Glass and Mirrors','Tires','Lights','Cargo Doors','Cargo Floor','Bulkhead','Tie-Downs','Seats','Seat Belts','Fire Extinguisher','Cabin Floor','Surfaces and Dash','Air Quality','Cargo Cleanliness','Additional Equipment Present','Key Fob'];
   const requiredPhotoFields = ['Exterior Driver Side Photo','Exterior Front Photo','Exterior Passenger Side Photo','Exterior Rear Photo','Interior Front Photo','Interior Rear Photo'];
+  form.addEventListener('invalid', function(e) {
+    const label = e.target.closest('.info-field, .photo-field, .sig-block, .keys-row')?.querySelector('label')?.textContent || e.target.name || 'a required field';
+    showStatus('Please complete this required item before submitting: ' + label.trim(), 'error');
+  }, true);
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     const missing = requiredRadioGroups.filter(name => !form.querySelector(`input[name="${name}"]:checked`));
@@ -227,21 +233,35 @@
     const equipmentNotes = form.querySelector('textarea[name="Equipment Notes"]');
     if (equipmentAnswer && equipmentAnswer.value === 'Yes' && selectedEquipment.length === 0 && equipmentNotes.value.trim() === '') missing.push('Equipment details or equipment notes');
     if (missingPhotos.length > 0) missing.push(...missingPhotos);
-    if (missing.length > 0) { alert('Please complete the following before submitting:\n\n' + missing.map(n => '- ' + n).join('\n')); return; }
-    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (missing.length > 0) {
+      const message = 'Please complete the following before submitting:\n\n' + missing.map(n => '- ' + n).join('\n');
+      showStatus(message, 'error');
+      submitStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert(message);
+      return;
+    }
+    if (!form.checkValidity()) {
+      showStatus('Please complete every required field before submitting. The browser will highlight the next item that needs attention.', 'error');
+      form.reportValidity();
+      return;
+    }
     submitBtn.disabled = true;
     submitBtn.textContent = 'Preparing photos...';
+    showStatus('Preparing photos. Please keep this page open until submission completes.', 'info');
     try {
       const payload = { fields: collectFields(), photos: [] };
       for (const name of requiredPhotoFields) {
         const input = form.querySelector(`input[name="${name}"]`);
         const file = input.files[0];
         submitBtn.textContent = 'Compressing ' + name + '...';
+        showStatus('Compressing photo: ' + name, 'info');
         payload.photos.push({ name, label: name, fileName: file.name, dataUrl: await imageToDataUrl(file) });
       }
       submitBtn.textContent = 'Uploading to Google Drive...';
-      await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+      showStatus('Uploading photos and form data to Google Drive. This can take up to 60 seconds.', 'info');
+      await postWithTimeout(payload, 90000);
       successBanner.style.display = 'block';
+      showStatus('Submission sent. Check the Google Sheet/Drive folder to confirm it was received.', 'success');
       successBanner.scrollIntoView({ behavior: 'smooth', block: 'start' });
       submitBtn.style.display = 'none';
       printBtn.style.display = 'none';
@@ -250,9 +270,44 @@
     } catch (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Submit Form';
-      alert('Submission failed. Please check your connection and try again.');
+      const message = err && err.message ? err.message : 'Submission failed. Please check your connection and try again.';
+      showStatus(message, 'error');
+      alert(message);
     }
   });
+  function showStatus(message, type) {
+    submitStatus.style.display = 'block';
+    submitStatus.textContent = message;
+    if (type === 'error') {
+      submitStatus.style.background = '#fdecea';
+      submitStatus.style.border = '1px solid #8b0000';
+      submitStatus.style.color = '#8b0000';
+    } else if (type === 'success') {
+      submitStatus.style.background = '#e8f5e9';
+      submitStatus.style.border = '1px solid #155f2d';
+      submitStatus.style.color = '#155f2d';
+    } else {
+      submitStatus.style.background = '#f0f4fa';
+      submitStatus.style.border = '1px solid #1a3a6b';
+      submitStatus.style.color = '#111';
+    }
+  }
+  function postWithTimeout(payload, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    }).catch(error => {
+      if (error.name === 'AbortError') {
+        throw new Error('Submission timed out before Google Drive confirmed receipt. Try again with smaller photos or stronger service.');
+      }
+      throw new Error('The upload could not reach Google Drive. Check connection and try again. If this repeats, the Google Apps Script deployment may not be public.');
+    }).finally(() => clearTimeout(timeout));
+  }
   function collectFields() {
     const data = {};
     const formData = new FormData(form);
@@ -266,11 +321,19 @@
   }
   function imageToDataUrl(file) {
     return new Promise((resolve, reject) => {
+      if (!file.type || !file.type.startsWith('image/')) {
+        reject(new Error(file.name + ' is not a supported image file. Please upload JPG or PNG photos.'));
+        return;
+      }
+      if (file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name)) {
+        reject(new Error(file.name + ' is an HEIC/HEIF image. Please change iPhone camera format to Most Compatible or upload JPG/PNG photos.'));
+        return;
+      }
       const reader = new FileReader();
-      reader.onerror = reject;
+      reader.onerror = () => reject(new Error('Could not read ' + file.name + '. Please retake or choose a different photo.'));
       reader.onload = () => {
         const img = new Image();
-        img.onerror = reject;
+        img.onerror = () => reject(new Error('Could not process ' + file.name + '. Please use a JPG or PNG photo.'));
         img.onload = () => {
           const maxSide = 1600;
           let width = img.width;
