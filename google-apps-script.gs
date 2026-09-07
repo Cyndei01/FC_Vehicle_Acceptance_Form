@@ -1,12 +1,23 @@
 const DRIVE_FOLDER_ID = '1G5p90HMxgaJIaq4uolLjGNdW23clx-D2';
+const SPREADSHEET_ID = '';
 const SHEET_NAME = 'Vehicle Inspections';
 
-function doGet() {
-  return jsonResponse({ ok: true, message: 'F&C Vehicle Acceptance Form endpoint is live.' });
+function doGet(e) {
+  if (e && e.parameter && e.parameter.health === '1') {
+    return jsonResponse(healthCheck());
+  }
+  return jsonResponse({
+    ok: true,
+    message: 'F&C Vehicle Acceptance Form endpoint is live.',
+    healthCheckUrl: 'Add ?health=1 to this URL to verify Drive and Sheet access.'
+  });
 }
 
 function doPost(e) {
   try {
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error('No form payload was received.');
+    }
     const payload = JSON.parse(e.postData.contents || '{}');
     const fields = payload.fields || {};
     const photos = payload.photos || [];
@@ -36,7 +47,7 @@ function doPost(e) {
 }
 
 function appendInspectionRow(fields, photoLinks, folderUrl) {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const spreadsheet = getSpreadsheet();
   let sheet = spreadsheet.getSheetByName(SHEET_NAME);
   if (!sheet) sheet = spreadsheet.insertSheet(SHEET_NAME);
 
@@ -82,6 +93,47 @@ function appendInspectionRow(fields, photoLinks, folderUrl) {
   });
 
   sheet.appendRow(row);
+}
+
+function getSpreadsheet() {
+  if (SPREADSHEET_ID) {
+    return SpreadsheetApp.openById(SPREADSHEET_ID);
+  }
+
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) {
+    throw new Error('No spreadsheet is connected. Open this script from the target Google Sheet, or set SPREADSHEET_ID to the Sheet ID.');
+  }
+  return spreadsheet;
+}
+
+function healthCheck() {
+  const result = {
+    ok: true,
+    driveFolderId: DRIVE_FOLDER_ID,
+    spreadsheetIdConfigured: Boolean(SPREADSHEET_ID),
+    sheetName: SHEET_NAME
+  };
+
+  try {
+    const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    result.driveFolderName = folder.getName();
+  } catch (error) {
+    result.ok = false;
+    result.driveError = String(error);
+  }
+
+  try {
+    const spreadsheet = getSpreadsheet();
+    result.spreadsheetName = spreadsheet.getName();
+    result.spreadsheetId = spreadsheet.getId();
+    result.targetSheetExists = Boolean(spreadsheet.getSheetByName(SHEET_NAME));
+  } catch (error) {
+    result.ok = false;
+    result.sheetError = String(error);
+  }
+
+  return result;
 }
 
 function ensureHeaders(sheet, headers) {
